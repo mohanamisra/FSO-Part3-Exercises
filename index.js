@@ -1,10 +1,36 @@
 const express = require('express');
+const morgan = require('morgan');
+
+morgan.token('type', function(req, res) {
+    if(req.body)
+    return JSON.stringify(req.body);
+    else
+        return "";
+});
+morgan(function (tokens, req, res) {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms',
+        tokens.type(req, res)
+    ].join(' ')
+})
+
 const app = express();
 
 app.use(express.json());
-
-const morgan = require('morgan');
-app.use(morgan('tiny'));
+app.use(morgan(function (tokens, req, res) {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms',
+        tokens.type(req, res)
+    ].join(' ')
+}));
 
 let persons = [
     {
@@ -71,7 +97,7 @@ app.post('/api/persons', (request, response) => {
             error: 'number is missing'
         })
     }
-    if(persons.filter(OGPerson => OGPerson.name === person.name)) {
+    if(persons.some(OGPerson => OGPerson.name === person.name)) {
         return response.status(400).json({
             error: 'name already exists'
         })
@@ -83,7 +109,7 @@ app.post('/api/persons', (request, response) => {
         name: person.name,
         number: person.number
     }
-    persons.concat(newPerson);
+    persons = persons.concat(newPerson);
     response.json(newPerson);
 })
 
