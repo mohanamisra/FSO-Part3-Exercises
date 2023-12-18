@@ -26,6 +26,8 @@ let persons = [
     }
 ]
 
+//  REQUEST ROUTES
+
 app.get('/api/persons', (request, response) => {
     response.json(persons);
 })
@@ -53,6 +55,36 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(person => person.id !== id)
     response.status(204).end();
 })
+
+app.post('/api/persons', (request, response) => {
+    const person = request.body;
+    if(!person.name) {
+        return response.status(400).json({
+            error: 'name is missing'
+        })
+    }
+    if(!person.number) {
+        return response.status(400).json({
+            error: 'number is missing'
+        })
+    }
+    if(persons.filter(OGPerson => OGPerson.name === person.name)) {
+        return response.status(400).json({
+            error: 'name already exists'
+        })
+    }
+
+    const newId = Math.floor(Math.random() * (100 - 5 + 1) + 5);
+    const newPerson = {
+        id: newId,
+        name: person.name,
+        number: person.number
+    }
+    persons.concat(newPerson);
+    response.json(newPerson);
+})
+
+// END OF REQUEST ROUTES
 
 const PORT = 3001;
 app.listen(PORT, ()=> {
