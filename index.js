@@ -33,6 +33,7 @@ app.use(morgan(function (tokens, req, res) {
         tokens.type(req, res)
     ].join(' ')
 }));
+app.use(express.static('dist'));
 
 let persons = [
     {
@@ -117,7 +118,7 @@ app.post('/api/persons', (request, response) => {
 
 // END OF REQUEST ROUTES
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, ()=> {
     console.log('Server running on port 3001\nVISIT AT http://localhost:3001/api/persons')
 })
