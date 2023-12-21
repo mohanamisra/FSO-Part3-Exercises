@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 
 morgan.token('type', function(req, res) {
     if(req.body)
@@ -21,6 +22,7 @@ morgan(function (tokens, req, res) {
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use(morgan(function (tokens, req, res) {
     return [
         tokens.method(req, res),
