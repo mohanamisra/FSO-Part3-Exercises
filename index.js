@@ -1,6 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+
+const Person = require('./models/person');
 
 morgan.token('type', function(req, res) {
     if(req.body)
@@ -176,7 +179,7 @@ app.post('/api/persons', (request, response) => {
 
 // END OF REQUEST ROUTES
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, ()=> {
     console.log('Server running on port 3001\nVISIT AT http://localhost:3001/api/persons')
 })
