@@ -164,12 +164,10 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const newId = Math.floor(Math.random() * (100 - 5 + 1) + 5);
-    const newPerson = {
-        id: newId,
+    const newPerson = new Person({
         name: person.name,
         number: person.number
-    }
+    })
 
     newPerson.save().then(savedPerson => {
         response.json(savedPerson);
