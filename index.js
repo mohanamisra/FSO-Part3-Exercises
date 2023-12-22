@@ -101,6 +101,18 @@ app.post('/api/persons', (request, response) => {
             error: 'number is missing'
         })
     }
+    // IF SAME NAME:
+    let allPersons;
+    Person.find({}).then(result => {
+        allPersons = [...result];
+        if(allPersons.some(OGPerson => OGPerson.name === person.name)) {
+            Person.find({name: person.name})
+                .then(oldPerson => {
+                    console.log(oldPerson);
+                })
+        }
+    })
+    //
     const newPerson = new Person({
         name: person.name,
         number: person.number
@@ -109,6 +121,20 @@ app.post('/api/persons', (request, response) => {
     newPerson.save().then(savedPerson => {
         response.json(savedPerson);
     })
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body;
+
+    const person = {
+        name: body.name,
+        number: body.number,
+    }
+    Person.findByIdAndUpdate(request.params.id, person, {new: true})
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error));
 })
 
 // END OF REQUEST ROUTES
