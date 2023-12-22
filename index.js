@@ -79,6 +79,14 @@ const personSchema = new mongoose.Schema({
     number: Number,
 });
 
+personSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString();
+        delete returnedObject._id;
+        delete returnedObject.__v;
+    }
+})
+
 const Person = mongoose.model('Person', personSchema);
 
 const length = process.argv.length;
@@ -109,7 +117,9 @@ else {
 //  REQUEST ROUTES
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons);
+    Person.find({}).then(people => {
+        response.json(people);
+    })
 })
 
 app.get('/info', (request, response) => {
